@@ -134,4 +134,23 @@
     });
 </script>
 
+<script>
+    $(".delete-file").click(function (e) {
+        $(".loader").show();
+        e.preventDefault();
+        $.ajax({
+            type: "DELETE",
+            url: `/drive/delete/${this.id}`,
+            success: function (data) {
+                $(".loader").hide();
+                swal("Done!", "File Deleted Successfully!", "success")
+                    .then((value) => {
+                        $(".loader").show();
+                        window.location.replace("http://localhost:5000");
+                    });
+            }
+        });
+    });
+</script>
+
 </html>
