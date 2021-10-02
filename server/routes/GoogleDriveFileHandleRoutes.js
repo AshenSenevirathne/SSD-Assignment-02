@@ -17,4 +17,22 @@ var upload = multer({
   storage: Storage,
 }).single("file");
 
+// Router to delete google drive file
+router.delete("/delete/:id", async (req, res) => {
+  const drive = google.drive({
+    version: "v3",
+    auth: oAuth2Client
+  });
+
+  try {
+    const response = await drive.files.delete({
+      fileId: req.params.id
+    });
+    console.log(response.data, response.status);
+    res.send();
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 module.exports = router;
