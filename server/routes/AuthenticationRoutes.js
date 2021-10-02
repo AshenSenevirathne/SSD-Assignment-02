@@ -47,5 +47,9 @@ router.get("/authentication/google-callback", function (req, res) {
         });
     }
 });
-
+router.get('/logout', (req, res) => {
+    oAuth2Client.setCredentials({});
+    authorizedUser = false;
+    res.redirect('/')
+})
 module.exports = router;
