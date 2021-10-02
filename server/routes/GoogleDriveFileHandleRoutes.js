@@ -17,6 +17,45 @@ var upload = multer({
   storage: Storage,
 }).single("file");
 
+// Router to upload files to drive
+router.post("/upload", (req, res) => {
+  upload(req, res, function (err) {
+    if (err) {
+      throw err
+    } else {
+      console.log(req.file.path);
+      const drive = google.drive({
+        version: "v3",
+        auth: oAuth2Client
+      });
+
+      const fileMetadata = {
+        name: req.file.filename,
+      };
+
+      const media = {
+        mimeType: req.file.mimetype,
+        body: fs.createReadStream(req.file.path),
+      };
+
+      drive.files.create(
+        {
+          resource: fileMetadata,
+          media: media,
+          fields: "id",
+        }, (err, file) => {
+          if (err) {
+            console.error(err);
+          } else {
+            fs.unlinkSync(req.file.path)
+            res.redirect("/");
+          }
+        }
+      );
+    }
+  });
+});
+
 // Router to delete google drive file
 router.delete("/delete/:id", async (req, res) => {
   const drive = google.drive({
