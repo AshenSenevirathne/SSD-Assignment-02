@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { google } = require("googleapis");
 const oAuth2Client = require("../services/oAuth2Client");
-const getDriveFileList = require("../services/driveFileList");
 
 let authorizedUser = false;
 
@@ -30,6 +29,22 @@ router.get("/", (req, res) => {
             scope: process.env.SCOPES,
         });
         res.render("index", { url: url });
+    }
+});
+
+// Route for Google callback
+router.get("/authentication/google-callback", function (req, res) {
+    const code = req.query.code;
+    if (code) {
+        oAuth2Client.getToken(code, function (err, tokens) {
+            if (err) {
+                console.log("Error", err);
+            } else {
+                oAuth2Client.setCredentials(tokens);
+                authorizedUser = true;
+                res.redirect("/");
+            }
+        });
     }
 });
 
