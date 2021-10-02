@@ -14,6 +14,12 @@ app.set("view engine", "ejs");
 // Middleware
 app.use(express.json());
 
+// Import routes
+const authenticationRoutes = require("./routes/AuthenticationRoutes");
+
+// Use Routes
+app.use("/", authenticationRoutes);
+
 // Starting the server
 app.listen(PORT, () => {
     console.log("Server is running on Port : " + PORT);
