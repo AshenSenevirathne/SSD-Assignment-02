@@ -110,6 +110,28 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-
+<script>
+    $("#uploadFileToDrive").submit(function (e) {
+        e.preventDefault();
+        $(".loader").show();
+        var formData = new FormData(this);
+        console.log(formData);
+        $.ajax({
+            type: "POST",
+            url: "/drive/upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $(".loader").hide();
+                swal("Done!", "File Uploded Successfully!", "success")
+                    .then((value) => {
+                        $(".loader").show();
+                        window.location.replace("http://localhost:5000");
+                    });
+            }
+        });
+    });
+</script>
 
 </html>
