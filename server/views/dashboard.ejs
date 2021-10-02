@@ -30,7 +30,80 @@
         </div>
     </div>
 </nav>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-center">
+                <div class="loader mb-4"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="text-dark">
+                        <span class="fa fa-list"></span>
+                        Google Drive File List
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-responsive text-center">
+                        <thead class="bg-dark text-white">
+                        <tr>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% var ejsVal=files %>
+                        <% ejsVal && ejsVal.forEach((file)=> { %>
 
+                            <tr>
+                                <td>
+                                    <%= file.name %>
+                                </td>
+                                <td>
+                                    <a id="<%=file.id%>" class="btn btn-danger text-white delete-file"><span
+                                                class="fas fa-trash me-3"></span>Delete File</a>
+                                </td>
+                            </tr>
+
+                        <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-5">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="text-dark">
+                        <span class="fab fa-google-drive"></span>
+                        Upload File to Google Drive
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <% if (success) { %>
+                        <div class="alert alert-success alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <strong>Success!</strong> Your Image File is Uploaded.
+                        </div>
+                    <%}%>
+                    <form id="uploadFileToDrive">
+                        <div class="form-group">
+                            <input type="file" class="form-control" name="file" required id="" />
+                        </div>
+                        <div class="form-group mt-2 text-center">
+                            <button type="submit" class="btn btn-block btn-primary">
+                                Upload File
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
