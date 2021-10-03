@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { google } = require("googleapis");
 const oAuth2Client = require("../services/oAuth2Client");
+const getDriveFileList = require("../services/driveFileList");
 
 let authorizedUser = false;
 
@@ -15,12 +16,14 @@ router.get("/", (req, res) => {
             if (err) {
                 console.log(err);
             } else {
-                res.render("dashboard", {
-                    userName: response.data.name,
-                    imageURL: response.data.picture,
-                    files: [],
-                    success: false
-                });
+                getDriveFileList().then(googleFileListResponse => {
+                    res.render("dashboard", {
+                        userName: response.data.name,
+                        imageURL: response.data.picture,
+                        files: googleFileListResponse.data.files,
+                        success: false
+                    });
+                })
             }
         });
     } else {
