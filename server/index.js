@@ -16,9 +16,11 @@ app.use(express.json());
 
 // Import routes
 const authenticationRoutes = require("./routes/AuthenticationRoutes");
+const googleDriveFileHandleRoutes = require("./routes/GoogleDriveFileHandleRoutes");
 
 // Use Routes
 app.use("/", authenticationRoutes);
+app.use("/drive", googleDriveFileHandleRoutes);
 
 // Starting the server
 app.listen(PORT, () => {
