@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>G-Drive File Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <style>
+        .loader {
+            display: none;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader:after {
+            content: " ";
+            display: block;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+        @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+</head>
+
+<body class="bg-dark">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Google Drive File Uploader</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="d-flex ms-auto align-items-center justify-content-center">
+                <h5 class="text-dark me-3">
+                    <%= userName %>
+                </h5>
+                <img class="rounded-circle" alt="100x100" width="50px" src="<%=imageURL%>">
+                <a href="/logout" class="btn btn-outline-dark ms-3">Sign Out</a>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-center">
+                <div class="loader mb-4"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="text-dark">
+                        <span class="fa fa-list"></span>
+                        Google Drive File List
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-responsive text-center">
+                        <thead class="bg-dark text-white">
+                        <tr>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% var ejsVal=files %>
+                        <% ejsVal && ejsVal.forEach((file)=> { %>
+
+                            <tr>
+                                <td>
+                                    <%= file.name %>
+                                </td>
+                                <td>
+                                    <a id="<%=file.id%>" class="btn btn-danger text-white delete-file"><span
+                                                class="fas fa-trash me-3"></span>Delete File</a>
+                                </td>
+                            </tr>
+
+                        <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-5">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3 class="text-dark">
+                        <span class="fab fa-google-drive"></span>
+                        Upload File to Google Drive
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <% if (success) { %>
+                        <div class="alert alert-success alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            <strong>Success!</strong> Your Image File is Uploaded.
+                        </div>
+                    <%}%>
+                    <form id="uploadFileToDrive">
+                        <div class="form-group">
+                            <input type="file" class="form-control" name="file" required id="" />
+                        </div>
+                        <div class="form-group mt-2 text-center">
+                            <button type="submit" class="btn btn-block btn-primary">
+                                Upload File
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $("#uploadFileToDrive").submit(function (e) {
+        e.preventDefault();
+        $(".loader").show();
+        var formData = new FormData(this);
+        console.log(formData);
+        $.ajax({
+            type: "POST",
+            url: "/drive/upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $(".loader").hide();
+                swal("Done!", "File Uploded Successfully!", "success")
+                    .then((value) => {
+                        $(".loader").show();
+                        window.location.replace("http://localhost:5000");
+                    });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(".delete-file").click(function (e) {
+        $(".loader").show();
+        e.preventDefault();
+        $.ajax({
+            type: "DELETE",
+            url: `/drive/delete/${this.id}`,
+            success: function (data) {
+                $(".loader").hide();
+                swal("Done!", "File Deleted Successfully!", "success")
+                    .then((value) => {
+                        $(".loader").show();
+                        window.location.replace("http://localhost:5000");
+                    });
+            }
+        });
+    });
+</script>
+
+</html>
